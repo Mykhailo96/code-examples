@@ -1,4 +1,4 @@
-## Account Tokenization API service
+## Account Tokenization API service. API service provides a possibility to tokenize and securely a your account data. It contains multiple layers, here are some of them: 'Controllers' - describes endpoints (HTTP methods, URLs), input and output data, validation rules, possible response status codes and response body. 'Controller' layer does not contain any business logic, it is just an interface for the API clients. 'Services' - contains all business logic. It receives its input parameters from the 'Controller' layer. It is responsible for any calculations, sending events, communication with DAL etc.
 
 ### API controller to tokenize and manage account data
 
@@ -192,9 +192,9 @@ internal sealed class TokenizationService : ITokenizationService
 }
 ```
 
-## Integration Event handler. A background app that is subscribed to multiple topics to receive and hanlde async events from other services/apps
+## Integration Event handler. Our system includes multiple services that uses integration events to communicate changes between them. To handle multiple integration events of different types we should provide a 'Chain of Responsibility' flow for each listener. To implement such listeners I've created a new background app (Hosted Service) that is subscribed to multiple topics to receive and handle async events from other services/apps. It reads events from SQS queues and uses a custom implementation of 'Chain of Responsibility' that can be easily integrated with .NET DI.
 
-### Extend DI with own Chain of Responsibility
+### Extend DI with own Chain of Responsibility. You can registed as many handlers as you want. Just make sure that handlers order is correct.
 
 ```csharp
 services.AddChain()
@@ -203,7 +203,7 @@ services.AddChain()
     .AddHandler<AccountDeletedHandler>();
 ```
 
-### Custom Handler Registry and Manager to register event handlers
+### Custom Handler Registry and Manager to register custom event handlers and their dependencies.
 ```csharp
 public static class Extensions
 {
